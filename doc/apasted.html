@@ -77,7 +77,8 @@ apasted's working directory. </dd>
 
  <dt> -p <em>prefix</em> </dt>
  <dd> When sending a slug to the client, prefix <em>subdir</em> with <em>prefix</em>,
-and append a slash at the end. This is useful when apasted writes its files to
+and append a slash at the end if <em>prefix</em> starts with <tt>http</tt>.
+This is useful when apasted writes its files to
 a web server's document hierarchy, which is the intended case. If <em>prefix</em>
 is the URL of apasted's base directory, then the slug can directly be used as a
 URL to access the client's files. </dd>
