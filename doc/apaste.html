@@ -1,0 +1,114 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="en" />
+    <title>apaste: the apaste program</title>
+    <meta name="Description" content="apaste: the apaste program" />
+    <meta name="Keywords" content="apaste client interface pastebin command-line tpaste sprunge fiche s6-networking tcpclient tlsclient tls ssl" />
+    <!-- <link rel="stylesheet" type="text/css" href="//skarnet.org/default.css" /> -->
+  </head>
+<body>
+
+<p>
+<a href="index.html">apaste</a><br />
+<a href="//skarnet.org/software/">Software</a><br />
+<a href="//skarnet.org/">skarnet.org</a>
+</p>
+
+<h1> The <tt>apaste</tt> program </h1>
+
+<p>
+ <tt>apaste</tt> is a program that reads one or more files, or its
+standard input, and sends the data to an <a href="apasted.html">apasted</a>
+server.
+</p>
+
+<h2> Interface </h2>
+
+<pre>
+     apaste [ -S | -s ] [ -C <em>cadir</em> ] [ -d <em>server</em>[<em>:port</em>] ] [ -r <em>rtimeout</em> ] [ -w <em>wtimeout</em> ] <em>file...</em>
+</pre>
+
+<ul>
+ <li> apaste connects to a remote server via a plaintext or TLS-secured
+connection, expecting to find an <a href="apasted.html">apasted</a> server at the
+other end. </li>
+ <li> For every <em>file</em> given as argument, it sends the contents of <em>file</em>
+over the network. If <em>file</em> is <tt>-</tt> (dash), then stdout is transmitted
+until EOF. </li>
+ <li> The server answers with a blob of six printable characters, named a <em>slug</em>.
+Depending on the server configuration, it may embed the slug in a complete URL, for
+easy copy-paste into a browser; or it may embed it in another way. </li>
+ <li> apaste prints the slug to its stdout, then exits 0. </li>
+</ul>
+
+<h2> Exit codes </h2>
+
+<dl>
+ <dt> 0 </dt> <dd> Success. The data has been recorded by the server and available in
+some way as indicated by the slug. </dd>
+ <dt> 100 </dt> <dd> Bad usage. apaste was run in an incorrect way. </dd>
+ <dt> 111 </dt> <dd> System call failed. This usually signals an issue with the
+underlying operating system, or with the network in some way. </dt>
+</dl>
+
+<h2> Options </h2>
+
+<dl>
+ <dt> -S </dt>
+ <dd> Normal, plain text connection to the server, even if the built-in default
+is TLS. The built-in default can be changed via the <tt>--with-default-tls</tt>
+or <tt>--without-default-tls</tt> options to configure. </dd>
+
+ <dt> -s </dt>
+ <dd> TLS connection to the server, even if the built-in default
+is plain text. The built-in default can be changed via the <tt>--with-default-tls</tt>
+or <tt>--without-default-tls</tt> options to configure. </dd>
+
+ <dt> -C <em>cadir</em> </dt>
+ <dd> When using a TLS connection, use <em>cadir</em> as the directory
+containing the hashed names of the trust anchor certificates
+(used for verifying the server's certificate chain). The built-in default
+can be changed via the <tt>--with-default-cadir</tt> option to configure. </dd>
+
+ <dt> -d <em>server</em>[<em>:port</em>] </dt>
+ <dd> Connect to server <em>server</em>, port <em>port</em>. The built-in defaults
+can be changed via the <tt>--with-default-server</tt>, <tt>--with-default-port</tt>,
+and <tt>--with-default-tlsport</tt> options to configure. </dd>
+
+ <dt> -r <em>rtimeout</em> </dt>
+ <dd> If the server isn't answering with a slug within <em>rtimeout</em>
+milliseconds, give up. The default is 0, meaning infinite: apaste will
+wait forever for a server reply if necessary. </dd>
+
+ <dt> -w <em>wtimeout</em> </dt>
+ <dd> If the server hasn't accepted all the data within <em>wtimeout</em>
+milliseconds, give up. The default is 0, meaning infinite: apaste will
+take as much time as it needs to send its data. </dd>
+</dl>
+
+<h2> Example usage </h2>
+
+<ul>
+ <li> <code>$ echo Blah blah. | apaste -</code> </li>
+ <li> <code># apaste /etc/shadow   </code> <small>(Just kidding. Don't do that.)</small> </li>
+</ul>
+
+<h2> Notes </h2>
+
+<ul>
+ <li> apaste is only a wrapper around
+<a href="//skarnet.org/software/s6-networking/s6-tcpclient.html">s6-tcpclient</a>
+(for plain connections) or
+<a href="//skarnet.org/software/s6-networking/s6-tlsclient.html">s6-tlsclient</a>
+(for TLS-tunneled connections), and
+<a href="apastec.html">apastec</a> that is the real client. The point of apaste
+is to provide a short command line with good compiled-in defaults; make sure
+your defaults are correct at configure time when building the apaste package. </li>
+ <li> <tt>-</tt>, i.e. stdin, cannot be mentioned several times as an argument. It
+can be transmitted with other files, but cannot be duplicated. </li>
+</ul>
+
+</body>
+</html>

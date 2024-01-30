@@ -1,0 +1,137 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="en" />
+    <title>apaste: the apasted program</title>
+    <meta name="Description" content="apaste: the apasted program" />
+    <meta name="Keywords" content="apasted apaste server pastebin command-line tpaste sprunge fiche" />
+    <!-- <link rel="stylesheet" type="text/css" href="//skarnet.org/default.css" /> -->
+  </head>
+<body>
+
+<p>
+<a href="index.html">apaste</a><br />
+<a href="//skarnet.org/software/">Software</a><br />
+<a href="//skarnet.org/">skarnet.org</a>
+</p>
+
+<h1> The <tt>apasted</tt> program </h1>
+
+<p>
+ <tt>apasted</tt> is the server-side program for the apaste package. It
+expects its stdin and stdout to be connected to the network, having being
+contacted by an <a href="apastec.html">apastec</a> client. It reads a
+series of files transmitted by the client, stores it on the server, and
+sends back a <em>slug</em> to the client, i.e. an identifier for the
+stored files.
+</p>
+
+<h2> Interface </h2>
+
+<pre>
+     apasted [ -r <em>rtimeout</em> ] [ -w <em>wtimeout</em> ] [ -d <em>rootdir</em> ] [ -p <em>prefix</em> ] [ -m <em>maxfiles</em> ]
+</pre>
+
+<ul>
+ <li> apasted reads data on its stdin, expecting the protocol spoken by the
+<a href="apastec.html">apastec</a> client, containing one or more files. </li>
+ <li> It creates a subdirectory <em>subdir</em> in its working directory,
+and stores the files it receives under it.
+  <ul>
+   <li> If it only receives one file, it stores it in <tt><em>subdir</em>/index.txt</tt>. </li>
+   <li> If it receives two or more files, it stores each file <em>file</em> as
+<tt><em>subdir</em>/<em>file</em>.txt</tt>, and creates a
+<tt><em>subdir</em>/index.html</tt> file with hyperlinks to every file in <em>subdir</em>. </li>
+  </ul> </li>
+ <li> It sends the <em>subdir</em> name back to the client, as a <em>slug</em>. </li>
+ <li> It exits 0 </li>
+</ul>
+
+<h2> Exit codes </h2>
+
+<dl>
+ <dt> 0 </dt> <dd> Success. </dd>
+ <dt> 1 </dt> <dd> Protocol error. The client sent incorrectly formatted data. </dd>
+ <dt> 100 </dt> <dd> Bad usage. apasted was run in an incorrect way. </dd>
+ <dt> 111 </dt> <dd> System call failed. This usually signals an issue with the
+underlying operating system, or with the network in some way. </dt>
+</dl>
+
+<h2> Options </h2>
+
+<dl>
+ <dt> -r <em>rtimeout</em> </dt>
+ <dd> If the client hasn't transmitted all its data within <em>rtimeout</em>
+milliseconds, give up. The default is 0, meaning infinite: apasted will
+wait forever for client data if necessary. </dd>
+
+ <dt> -w <em>wtimeout</em> </dt>
+ <dd> If apasted fails to send the slug to the client within <em>wtimeout</em>
+milliseconds, give up. The default is 0, meaning infinite: apasted will
+take as much time as it needs to send its answer. </dd>
+
+ <dt> -d <em>rootdir</em> </dt>
+ <dd> Switch to <em>rootdir</em> and store files there. The default is
+apasted's working directory. </dd>
+
+ <dt> -p <em>prefix</em> </dt>
+ <dd> When sending a slug to the client, prefix <em>subdir</em> with <em>prefix</em>,
+and append a slash at the end. This is useful when apasted writes its files to
+a web server's document hierarchy, which is the intended case. If <em>prefix</em>
+is the URL of apasted's base directory, then the slug can directly be used as a
+URL to access the client's files. </dd>
+
+ <dt> -m <em>maxfiles</em> </dt>
+ <dd> Accept a maximum of <em>maxfiles</em> files at a time from the client.
+The default is 0, meaning unlimited: the client can send as many files as it
+wants and apasted will still store them if it is possible. </dd>
+</dl>
+
+<h2> Typical usage </h2>
+
+<ul>
+ <li> apasted is meant to be run under a super-server accepting client connections.
+Run it under inetd or
+<a href="//skarnet.org/software/s6-networking/s6-tcpserver.html">s6-tcpserver</a>
+for plaintext connections, and under
+<a href="//skarnet.org/software/s6-networking/s6-tlsserver.html">s6-tlsserver</a>
+for TLS-tunneled connections. </li>
+ <li> To publish the data received and stored by apasted, the simplest way is
+to have a web server running and serving the hierarchy of apasted files. Use the
+<tt>-p</tt> option on the apasted command line to make sure the client receives
+a full URL to its files. </li>
+</ul>
+
+<h2> Caveats </h2>
+
+<ul>
+ <li> apaste is a <em>push</em> protocol: the client sends data to be stored on
+the server. As such, it is very easy to abuse, and caution should be taken when
+running an apasted server:
+  <ul>
+   <li> If possible, have quotas on the filesystem hosting the apasted storage area </li>
+   <li> Use the <tt>-m</tt> option to avoid trivial inode exhaustion attacks </li>
+   <li> Use your super-server's options to mitigate client patterns of abuse, log and
+block the IPs of problematic clients </li>
+   <li> Run scripts that regularly delete old <em>subdir</em>s (and their contents)
+in the apasted storage area. </li>
+   <li> Be aware, and warn your users, that a pastebin is a service to the community,
+and that abusing the service is the best and quickest way to make it go away. </li>
+  </ul> </li>
+</ul>
+
+<h2> Notes </h2>
+
+<ul>
+ <li> apasted will store a file named <em>file</em> as <em>file.txt</em> so that a
+web server can always serve it as plain text. apaste is not meant to send binary
+files of an arbitrary MIME type. </li>
+ <li> A unique file is stored as <tt><em>slug</em>/index.txt</tt>; if apasted is
+run with <tt>-p http://example.com/</tt> then the apaste client, on success,
+will print <tt>http://example.com/<em>slug</em>/</tt>. Make sure that your web server can
+automatically interpret that URL as <tt>http://example.com/<em>slug</em>/index.txt</tt>. </li>
+</ul>
+
+</body>
+</html>

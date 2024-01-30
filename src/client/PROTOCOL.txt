@@ -1,0 +1,19 @@
+
+apastec:
+
+banner \n
+nfiles (uint32) \n
+{
+  namelength (uint16) \n
+  name (namelength) \n
+  filelength (uint64) \n
+  file (filelength) \n
+}
+banner \n
+
+
+apasted:
+
+banner \n
+slug \n 
+banner \n

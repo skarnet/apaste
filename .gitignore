@@ -1,0 +1,10 @@
+*.o
+*.a
+*.lo
+*.so
+*.so.*
+/config.mak
+/src/include/apaste/config.h
+/apaste
+/apastec
+/apasted

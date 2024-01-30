@@ -1,0 +1,4 @@
+send_file.o
+-lskarnet
+${SOCKET_LIB}
+${SYSCLOCK_LIB}

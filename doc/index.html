@@ -1,0 +1,110 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="en" />
+    <title>apaste - a small command-line pastebin</title>
+    <meta name="Description" content="apaste - a small command-line pastebin" />
+    <meta name="Keywords" content="apaste pastebin tpaste fiche command line laurent bercot ska skarnet" />
+    <!-- <link rel="stylesheet" type="text/css" href="//skarnet.org/default.css" /> -->
+  </head>
+<body>
+
+<p>
+<a href="//skarnet.org/software/">Software</a><br />
+<a href="//skarnet.org/">skarnet.org</a>
+</p>
+
+<h1> apaste </h1>
+
+<h2> What is it&nbsp;? </h2>
+
+<p>
+  apaste is a small command-line pastebin, to share terminal output
+by pushing it to a server, so it can be made public via the Web or some
+other protocol.
+</p>
+
+<hr />
+
+<h2> Installation </h2>
+
+<h3> Requirements </h3>
+
+<ul>
+ <li> A POSIX-compliant system with a standard C development environment </li>
+ <li> GNU make, version 3.81 or later </li>
+ <li> <a href="//skarnet.org/software/skalibs/">skalibs</a> version
+2.14.1.1 or later. It's a build-time requirement. It's also a run-time
+requirement if you link against the shared version of the skalibs
+library. </li>
+ <li> <a href="//skarnet.org/software/s6-networking/">s6-networking</a> version
+2.7.0.2 or later. It's a build-time and run-time requirement: it's the layer
+that provides the network connection. </li>
+</ul>
+
+<h3> Licensing </h3>
+
+<p>
+ apaste is free software. It is available under the
+<a href="https://opensource.org/licenses/ISC">ISC license</a>.
+</p>
+
+<h3> Download </h3>
+
+<ul>
+ <li> The current released version of apaste is
+<a href="apaste-0.0.1.0.tar.gz">0.0.1.0</a>. </li>
+ <li> You can checkout a copy of the
+<a href="//git.skarnet.org/cgi-bin/cgit.cgi/apaste/">apaste
+git repository</a>:
+<pre> git clone git://git.skarnet.org/apaste </pre> </li>
+ <li> There's also a
+<a href="https://github.com/skarnet/apaste">GitHub mirror</a>
+of the apaste git repository. </li>
+</ul>
+
+<h3> Compilation </h3>
+
+<ul>
+ <li> See the enclosed INSTALL file for installation details. </li>
+</ul>
+
+<h3> Upgrade notes </h3>
+
+<ul>
+ <li> <a href="upgrade.html">This page</a> lists the differences to be aware of between
+the previous versions of apaste and the current one. </li>
+</ul>
+
+<hr />
+
+<h2> Reference </h2>
+
+<h3> Commands </h3>
+
+<ul>
+ <li> <a href="apaste.html">The <tt>apaste</tt> program</a> </li>
+ <li> <a href="apastec.html">The <tt>apastec</tt> program</a> </li>
+ <li> <a href="apasted.html">The <tt>apasted</tt> program</a> </li>
+</ul>
+
+<h2> Related resources </h2>
+
+<ul>
+ <li> <tt>apaste</tt> is discussed on the
+<a href="//skarnet.org/lists/#skaware">skaware</a> mailing-list. </li>
+</ul>
+
+<h2> Similar work </h2>
+
+<ul>
+ <li> <a href="https://github.com/solusipse/fiche">fiche</a> is also
+a small command-line pastebin utility. </li>
+ <li> <a href="https://tpaste.us/">tpaste</a> and
+<a href="https://sprunge.us/">sprunge </a> are similar utilities,
+one written in lua, the other in Python. </li>
+</ul>
+
+</body>
+</html>

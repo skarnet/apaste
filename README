@@ -1,0 +1,23 @@
+apaste - a command-line pastebin
+--------------------------------
+
+ apaste is a simple implementation of a pastebin, to publish data
+to a server via a short command line.
+ It was originally made for the Adélie Linux distribution, but
+can be used anywhere.
+ See https://skarnet.org/software/apaste/ for details.
+
+
+* Installation
+  ------------
+
+ See the INSTALL file.
+
+
+* Contact information
+  -------------------
+
+ Laurent Bercot <ska-skaware at skarnet.org>
+
+ Please use the <skaware at list.skarnet.org> mailing-list for
+questions about apaste.

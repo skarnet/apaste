@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="en" />
+    <title>apaste: the apastec program</title>
+    <meta name="Description" content="apaste: the apastec program" />
+    <meta name="Keywords" content="apastec apaste client interface pastebin command-line tpaste sprunge fiche" />
+    <!-- <link rel="stylesheet" type="text/css" href="//skarnet.org/default.css" /> -->
+  </head>
+<body>
+
+<p>
+<a href="index.html">apaste</a><br />
+<a href="//skarnet.org/software/">Software</a><br />
+<a href="//skarnet.org/">skarnet.org</a>
+</p>
+
+<h1> The <tt>apastec</tt> program </h1>
+
+<p>
+ <tt>apastec</tt> is a program that reads one or more files, or its
+standard input, and sends them to a preopened file descriptor.
+</p>
+
+<h2> Interface </h2>
+
+<pre>
+     apastec [ -r <em>rtimeout</em> ] [ -w <em>wtimeout</em> ] <em>file...</em>
+</pre>
+
+<ul>
+ <li> apastec expects to have, in addition to standard file descriptors 0, 1 and 2,
+its file descriptors 6 and 7 open and connected to a remote
+<a href="apasted.html">apasted</a> server. </li>
+ <li> For every <em>file</em> given as argument, it sends the contents of <em>file</em>
+over the network. If <em>file</em> is <tt>-</tt> (dash), then stdout is transmitted
+until EOF. </li>
+ <li> The server answers with a blob of six printable characters, named a <em>slug</em>.
+Depending on the server configuration, it may embed the slug in a complete URL, for
+easy copy-paste into a browser; or it may embed it in another way. </li>
+ <li> apastec prints the slug to its stdout, then exits 0. </li>
+</ul>
+
+<h2> Exit codes </h2>
+
+<dl>
+ <dt> 0 </dt> <dd> Success. The data has been recorded by the server and available in
+some way as indicated by the slug. </dd>
+ <dt> 100 </dt> <dd> Bad usage. apaste was run in an incorrect way. </dd>
+ <dt> 111 </dt> <dd> System call failed. This usually signals an issue with the
+underlying operating system, or with the network in some way. </dt>
+</dl>
+
+<h2> Options </h2>
+
+<dl>
+ <dt> -r <em>rtimeout</em> </dt>
+ <dd> If the server isn't answering with a slug within <em>rtimeout</em>
+milliseconds, give up. The default is 0, meaning infinite: apastec will
+wait forever for a server reply if necessary. </dd>
+
+ <dt> -w <em>wtimeout</em> </dt>
+ <dd> If the server hasn't accepted all the data within <em>wtimeout</em>
+milliseconds, give up. The default is 0, meaning infinite: apastec will
+take as much time as it needs to send its data. </dd>
+</dl>
+
+<h2> Typical usage </h2>
+
+<p>
+ apastec isn't meant to be used directly. It is meant to be invoked as
+part of a command line crafted by the <a href="apaste.html">apaste</a>
+command, where programs from the
+<a href="//skarnet.org/software/s6-networking/">s6-networking</a> package
+establish the connection to the server, then exec into apastec to read
+the user's data and transmit them with the apaste protocol.
+</p>
+
+<h2> Notes </h2>
+
+<ul>
+ <li> <tt>-</tt>, i.e. stdin, cannot be mentioned several times as an argument. It
+can be transmitted with other files, but cannot be duplicated. </li>
+</ul>
+
+</body>
+</html>
