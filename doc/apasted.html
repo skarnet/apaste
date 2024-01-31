@@ -30,7 +30,7 @@ stored files.
 <h2> Interface </h2>
 
 <pre>
-     apasted [ -r <em>rtimeout</em> ] [ -w <em>wtimeout</em> ] [ -d <em>rootdir</em> ] [ -p <em>prefix</em> ] [ -m <em>maxfiles</em> ]
+     apasted [ -r <em>rtimeout</em> ] [ -w <em>wtimeout</em> ] [ -d <em>rootdir</em> ] [ -p <em>prefix</em> ] [ -n <em>maxfiles</em> ] [ -s <em>maxsize</em> ]
 </pre>
 
 <ul>
@@ -83,10 +83,15 @@ a web server's document hierarchy, which is the intended case. If <em>prefix</em
 is the URL of apasted's base directory, then the slug can directly be used as a
 URL to access the client's files. </dd>
 
- <dt> -m <em>maxfiles</em> </dt>
+ <dt> -n <em>maxfiles</em> </dt>
  <dd> Accept a maximum of <em>maxfiles</em> files at a time from the client.
 The default is 0, meaning unlimited: the client can send as many files as it
 wants and apasted will still store them if it is possible. </dd>
+
+ <dt> -s <em>maxsize</em> </dt>
+ <dd> Accept a maximum of <em>maxsize</em> bytes for each file.
+0 means unlimited: the files can be as big as the client
+wants, which is not a very good idea. The default is 1 MB. </dd>
 </dl>
 
 <h2> Typical usage </h2>
@@ -112,7 +117,7 @@ the server. As such, it is very easy to abuse, and caution should be taken when
 running an apasted server:
   <ul>
    <li> If possible, have quotas on the filesystem hosting the apasted storage area </li>
-   <li> Use the <tt>-m</tt> option to avoid trivial inode exhaustion attacks </li>
+   <li> Use the <tt>-n</tt> option to avoid trivial inode exhaustion attacks </li>
    <li> Use your super-server's options to mitigate client patterns of abuse, log and
 block the IPs of problematic clients </li>
    <li> Run scripts that regularly delete old <em>subdir</em>s (and their contents)
