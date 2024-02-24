@@ -30,7 +30,7 @@ stored files.
 <h2> Interface </h2>
 
 <pre>
-     apasted [ -r <em>rtimeout</em> ] [ -w <em>wtimeout</em> ] [ -d <em>rootdir</em> ] [ -p <em>prefix</em> ] [ -n <em>maxfiles</em> ] [ -s <em>maxsize</em> ]
+     apasted [ -r <em>rtimeout</em> ] [ -w <em>wtimeout</em> ] [ -d <em>rootdir</em> ] [ -p <em>prefix</em> ] [ -n <em>maxfiles</em> ] [ -s <em>maxsize</em> ] [ -S <em>maxtotalsize</em> ]
 </pre>
 
 <ul>
@@ -92,6 +92,12 @@ wants and apasted will still store them if it is possible. </dd>
  <dd> Accept a maximum of <em>maxsize</em> bytes for each file.
 0 means unlimited: the files can be as big as the client
 wants, which is not a very good idea. The default is 1 MB. </dd>
+
+ <dt> -S <em>maxtotalsize</em> </dt>
+ <dd> Accept a maximum of <em>maxtotalsize</em> bytes for a single
+apaste transaction, all files included.
+0 means unlimited: the transaction can be as large as the client
+wants, which is not a very good idea. The default is 10 MB. </dd>
 </dl>
 
 <h2> Typical usage </h2>

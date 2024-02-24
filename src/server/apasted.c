@@ -27,7 +27,7 @@
 #include <apaste/config.h>
 #include "apaste-common.h"
 
-#define USAGE "apasted [ -r rtimeout ] [ -w wtimeout ] [ -d rootdir ] [ -p prefix ] [ -n maxfiles ] [ -s maxsize ]"
+#define USAGE "apasted [ -r rtimeout ] [ -w wtimeout ] [ -d rootdir ] [ -p prefix ] [ -n maxfiles ] [ -s maxsize ] [ -S maxtotalsize ]"
 #define dieusage() strerr_dieusage(100, USAGE)
 
 #define FORBIDDEN " \t\r\n\"<>&;"
@@ -155,7 +155,7 @@ static inline size_t add_unique (stralloc *sa, size_t *indices, uint32_t n, char
   return blen ;
 }
 
-static void read_one_file (char const *dir, buffer *b, buffer *ib, stralloc *sa, size_t *indices, uint32_t n, uint64_t maxsize, tain const *deadline)
+static void read_one_file (char const *dir, buffer *b, buffer *ib, stralloc *sa, size_t *indices, uint32_t n, uint64_t maxsize, uint64_t maxtotalsize, uint64_t *cursize, tain const *deadline)
 {
   uint64_t filelen ;
   size_t bnamelen ;
@@ -201,7 +201,7 @@ static void read_one_file (char const *dir, buffer *b, buffer *ib, stralloc *sa,
     char fmt[UINT64_FMT] ;
     if (sanitize_read(timed_getlnmax_g(b, fmt, UINT64_FMT, &w, '\n', deadline)) <= 0) goto err ;
     m = uint64_scan(fmt, &filelen) ;
-    if (!m || m+1 != w || fmt[m] != '\n' || filelen > maxsize) goto err ;
+    if (!m || m+1 != w || fmt[m] != '\n' || (maxsize && filelen > maxsize) || (maxtotalsize && (filelen > maxtotalsize || *cursize + filelen > maxtotalsize))) goto err ;
   }
 
   {
@@ -233,6 +233,8 @@ static void read_one_file (char const *dir, buffer *b, buffer *ib, stralloc *sa,
     if (c != '\n') goto err ;
   }
 
+  *cursize += filelen ;
+
   if (ib) add_index_entry(dir, ib, sa->s + indices[n], filelen) ;
   return ;
 
@@ -246,6 +248,8 @@ int main (int argc, char const *const *argv)
   char const *prefix = "" ;
   tain rtto = TAIN_INFINITE_RELATIVE, wtto = TAIN_INFINITE_RELATIVE ;
   tain deadline ;
+  uint64_t maxtotalsize = 10485760 ;
+  uint64_t cursize = 0 ;
   uint64_t maxsize = 1048576 ;
   uint32_t maxfiles = 0 ;
   uint32_t n ;
@@ -259,7 +263,7 @@ int main (int argc, char const *const *argv)
     subgetopt l = SUBGETOPT_ZERO ;
     for (;;)
     {
-      int opt = subgetopt_r(argc, argv, "r:w:d:p:n:s:", &l) ;
+      int opt = subgetopt_r(argc, argv, "r:w:d:p:n:s:S:", &l) ;
       if (opt == -1) break ;
       switch (opt)
       {
@@ -269,6 +273,7 @@ int main (int argc, char const *const *argv)
         case 'p' : prefix = l.arg ; break ;
         case 'n' : if (!uint320_scan(l.arg, &maxfiles)) dieusage() ; break ;
         case 's' : if (!uint640_scan(l.arg, &maxsize)) dieusage() ; break ;
+        case 'S' : if (!uint640_scan(l.arg, &maxtotalsize)) dieusage() ; break ;
         default : dieusage() ;
       }
     }
@@ -304,7 +309,7 @@ int main (int argc, char const *const *argv)
   }
 
   if (!mkdtemp(dir)) strerr_diefu1sys(111, "mkdtemp") ;
-  if (n == 1) read_one_file(dir, &b, 0, 0, 0, 0, maxsize, &deadline) ;
+  if (n == 1) read_one_file(dir, &b, 0, 0, 0, 0, maxsize, maxtotalsize, &cursize, &deadline) ;
   else
   {
     stralloc sa = STRALLOC_ZERO ;
@@ -312,7 +317,7 @@ int main (int argc, char const *const *argv)
     buffer ib ;
     char ibuf[4096] ;
     prepare_index(&ib, dir, ibuf, 4096) ;
-    for (uint32_t i = 0 ; i < n ; i++) read_one_file(dir, &b, &ib, &sa, indices, i, maxsize, &deadline) ;
+    for (uint32_t i = 0 ; i < n ; i++) read_one_file(dir, &b, &ib, &sa, indices, i, maxsize, maxtotalsize, &cursize, &deadline) ;
     finish_index(&ib, dir) ;
   }
 
