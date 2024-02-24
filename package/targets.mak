@@ -4,4 +4,3 @@ apastec \
 apasted
 
 LIBEXEC_TARGETS :=
-
