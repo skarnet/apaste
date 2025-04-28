@@ -1,0 +1,7 @@
+  --with-default-server=SERVER  use SERVER as default server for apaste [adelielinux.xyz]
+  --with-default-port=PORT      use PORT as default clear port for apaste [9999]
+  --with-default-tlsport=PORT   use PORT as default TLS-enabled port for apaste [9997]
+  --with-default-cadir=CADIR    use CADIR as trust anchor certificate location [/etc/ssl/certs]
+  --with-default-tls            use secure connections by default [no]
+  --with-tmpdir=TMPDIR          make temporary files in TMPDIR [/tmp]
+

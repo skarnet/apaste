@@ -1,0 +1,10 @@
+echo "#define ${package_macro_name}_DEFAULT_SERVER \"$server\""
+echo "#define ${package_macro_name}_DEFAULT_PORT $port"
+echo "#define ${package_macro_name}_DEFAULT_TLSPORT $tlsport"
+echo "#define ${package_macro_name}_DEFAULT_CADIR \"$cadir\""
+if $deftls ; then
+echo "#define ${package_macro_name}_DEFAULT_TLS 1"
+else
+echo "#define ${package_macro_name}_DEFAULT_TLS 0"
+fi
+echo "#define ${package_macro_name}_TMPDIR \"$tmpdir\""

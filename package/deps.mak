@@ -7,10 +7,10 @@ src/client/apastec.o src/client/apastec.lo: src/client/apastec.c src/include-loc
 src/client/send_file.o src/client/send_file.lo: src/client/send_file.c
 src/server/apasted.o src/server/apasted.lo: src/server/apasted.c src/include-local/apaste-common.h src/include/apaste/config.h
 
-apaste: EXTRA_LIBS := -lskarnet
-apaste: src/client/apaste.o
-apastec: EXTRA_LIBS := -lskarnet ${SOCKET_LIB} ${SYSCLOCK_LIB}
-apastec: src/client/apastec.o src/client/send_file.o
-apasted: EXTRA_LIBS := -lskarnet ${SOCKET_LIB} ${SYSCLOCK_LIB}
-apasted: src/server/apasted.o
+apaste: EXTRA_LIBS :=
+apaste: src/client/apaste.o -lskarnet
+apastec: EXTRA_LIBS := ${SOCKET_LIB} ${SYSCLOCK_LIB}
+apastec: src/client/apastec.o src/client/send_file.o -lskarnet
+apasted: EXTRA_LIBS := ${SOCKET_LIB} ${SYSCLOCK_LIB}
+apasted: src/server/apasted.o -lskarnet
 INTERNAL_LIBS :=

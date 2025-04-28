@@ -25,7 +25,7 @@ Fine tuning of the installation directories:
   --includedir=DIR              C header files [PREFIX/include]
   --sysconfdir=DIR              global configuration files [PREFIX/etc]
   --pkgconfdir=DIR              pkg-config .pc files [PREFIX/lib/pkgconfig]
-
+${configure_help_install}
  If no --prefix option is given, by default libdir (but not dynlibdir) will be
  /usr/lib, and includedir will be /usr/include.
 
@@ -35,7 +35,7 @@ Dependencies:
   --with-lib=DIR                add DIR to the list of searched directories for static libraries
   --with-dynlib=DIR             add DIR to the list of searched directories for shared libraries
   --with-pkgconfig[=PROG]       use pkg-config to look for dependencies
-
+${configure_help_dependencies}
  If no --prefix option is given, by default sysdeps will be fetched from
  /usr/lib/skalibs/sysdeps.
 
@@ -48,13 +48,7 @@ Optional features:
   --enable-pkgconfig            Build and install .pc files for pkg-config [disabled]
   --enable-slashpackage[=ROOT]  assume /package installation at ROOT [disabled]
   --enable-absolute-paths       hardcode absolute BINDIR/foobar paths in binaries [disabled]
-  --with-default-server=SERVER  use SERVER as default server for apaste [adelielinux.xyz]
-  --with-default-port=PORT      use PORT as default clear port for apaste [9999]
-  --with-default-tlsport=PORT   use PORT as default TLS-enabled port for apaste [9997]
-  --with-default-cadir=CADIR    use CADIR as trust anchor certificate location [/etc/ssl/certs]
-  --with-default-tls            use secure connections by default [no]
-  --with-tmpdir=TMPDIR          make temporary files in TMPDIR [/tmp]
-
+${configure_help_options}
 EOF
 exit 0
 }
@@ -173,12 +167,7 @@ deplibpath=''
 vpaths=''
 vpathd=''
 build=
-server=adelielinux.xyz
-port=9999
-tlsport=9997
-cadir=/etc/ssl/certs
-deftls=false
-tmpdir=/tmp
+${configure_init_vars}
 
 for arg ; do
   case "$arg" in
@@ -216,13 +205,7 @@ for arg ; do
     --disable-slashpackage) sproot= ; slashpackage=false ;;
     --enable-absolute-paths|--enable-absolute-paths=yes) abspath=true ;;
     --disable-absolute-paths|--enable-absolute-paths=no) abspath=false ;;
-    --with-default-server=*) server=${arg#*=} ;;
-    --with-default-port=*) port=${arg#*=} ;;
-    --with-default-tlsport=*) tlsport=${arg#*=} ;;
-    --with-default-cadir=*) cadir=${arg#*=} ;;
-    --with-default-tls|--with-default-tls=yes) deftls=true ;;
-    --without-default-tls|--with-default-tls=no) deftls=false ;;
-    --with-tmpdir=*) tmpdir=${arg#*=} ;;
+${configure_case_lines}
     --enable-*|--disable-*|--with-*|--without-*|--*dir=*) ;;
     --enable-*|--disable-*|--with-*|--without-*|--*dir=*) ;;
     --host=*|--target=*) target=${arg#*=} ;;
@@ -251,7 +234,7 @@ fi
 
 # Expand installation directories
 stripdir prefix
-for i in exec_prefix dynlibdir libexecdir bindir libdir includedir sysconfdir pkgconfdir sysdeps sproot  ; do
+for i in exec_prefix dynlibdir libexecdir bindir libdir includedir sysconfdir pkgconfdir sysdeps sproot ${configure_expand_dirs} ; do
   eval tmp=\${$i}
   eval $i=$tmp
   stripdir $i
@@ -320,7 +303,7 @@ if $slashpackage ; then
   libexecdir=$bindir
   includedir=${home}/include
   pkgconfdir=${home}/pkgconfig
-
+${configure_slashpackage_other}
 fi
 
 # Get usable temp filenames
@@ -438,7 +421,7 @@ else
   LDFLAGS_NOSHARED="${LDFLAGS_NOSHARED}${addlibdpath}"
 fi
 
-
+${configure_extra_checks}
 
 echo "Creating config.mak..."
 cmdline=$(quote "$0")
@@ -516,7 +499,7 @@ if $allpic ; then
 else
   echo "STATIC_LIBS_ARE_PIC :="
 fi
-
+${configure_generate_make}
 exec 1>&3 3>&-
 echo "  ... done."
 
@@ -548,16 +531,7 @@ else
 fi
 echo "#define ${package_macro_name}_LIBEXECPREFIX \"$libexecdir/\""
 echo "#define ${package_macro_name}_SYSCONFPREFIX \"$sysconfdir/\""
-echo "#define ${package_macro_name}_DEFAULT_SERVER \"$server\""
-echo "#define ${package_macro_name}_DEFAULT_PORT $port"
-echo "#define ${package_macro_name}_DEFAULT_TLSPORT $tlsport"
-echo "#define ${package_macro_name}_DEFAULT_CADIR \"$cadir\""
-if $deftls ; then
-echo "#define ${package_macro_name}_DEFAULT_TLS 1"
-else
-echo "#define ${package_macro_name}_DEFAULT_TLS 0"
-fi
-echo "#define ${package_macro_name}_TMPDIR \"$tmpdir\""
+${configure_generate_configh}
 echo
 echo "#endif"
 exec 1>&3 3>&-

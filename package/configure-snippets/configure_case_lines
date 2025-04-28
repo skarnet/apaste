@@ -1,0 +1,7 @@
+    --with-default-server=*) server=${arg#*=} ;;
+    --with-default-port=*) port=${arg#*=} ;;
+    --with-default-tlsport=*) tlsport=${arg#*=} ;;
+    --with-default-cadir=*) cadir=${arg#*=} ;;
+    --with-default-tls|--with-default-tls=yes) deftls=true ;;
+    --without-default-tls|--with-default-tls=no) deftls=false ;;
+    --with-tmpdir=*) tmpdir=${arg#*=} ;;

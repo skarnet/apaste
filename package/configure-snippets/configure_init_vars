@@ -1,0 +1,6 @@
+server=adelielinux.xyz
+port=9999
+tlsport=9997
+cadir=/etc/ssl/certs
+deftls=false
+tmpdir=/tmp
