@@ -1,2 +1,2 @@
 true		true	/package/prog/skalibs		2.15.0.0	libskarnet
-true		false	/package/net/s6-networking	2.7.3.0
+true		false	/package/net/s6-networking	2.8.0.0
